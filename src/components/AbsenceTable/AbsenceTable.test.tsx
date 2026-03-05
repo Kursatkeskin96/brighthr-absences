@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AbsenceTable from "./AbsenceTable";
 import type { Absence } from "../../types/absence";
 
@@ -24,10 +25,13 @@ const mockAbsences: Absence[] = [
 ];
 
 function renderTable(absences: Absence[] = mockAbsences) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return render(
-    <MemoryRouter>
-      <AbsenceTable absences={absences} />
-    </MemoryRouter>
+    <QueryClientProvider client={client}>
+      <MemoryRouter>
+        <AbsenceTable absences={absences} />
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 }
 

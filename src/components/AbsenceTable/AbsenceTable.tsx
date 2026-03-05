@@ -166,10 +166,41 @@ export default function AbsenceTable({ absences }: AbsenceTableProps) {
 
   return (
     <>
-      <div className="space-y-3 md:hidden">
-        {sorted.map((absence) => (
-          <AbsenceCard key={absence.id} absence={absence} />
-        ))}
+      <div className="md:hidden">
+        <div className="flex flex-col gap-1 mb-5">
+          <label
+            htmlFor="mobile-sort"
+            className="text-xs font-medium text-gray-500"
+          >
+            Sort by
+          </label>
+          <select
+            id="mobile-sort"
+            value={`${sort.field}-${sort.direction}`}
+            onChange={(e) => {
+              const [field, direction] = e.target.value.split("-") as [
+                SortField,
+                "asc" | "desc"
+              ];
+              setSort({ field, direction });
+            }}
+            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+          >
+            <option value="startDate-desc">Start Date (Newest)</option>
+            <option value="startDate-asc">Start Date (Oldest)</option>
+            <option value="endDate-desc">End Date (Newest)</option>
+            <option value="endDate-asc">End Date (Oldest)</option>
+            <option value="employeeName-asc">Employee (A–Z)</option>
+            <option value="employeeName-desc">Employee (Z–A)</option>
+            <option value="absenceType-asc">Type (A–Z)</option>
+            <option value="absenceType-desc">Type (Z–A)</option>
+          </select>
+        </div>
+        <div className="space-y-3">
+          {sorted.map((absence) => (
+            <AbsenceCard key={absence.id} absence={absence} />
+          ))}
+        </div>
       </div>
 
       <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
