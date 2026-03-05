@@ -10,6 +10,8 @@ import {
   type SortState,
 } from "../../utils/sortAbsences";
 import { formatDate, formatAbsenceType } from "../../utils/format";
+import { useConflicts } from "../../hooks/useConflicts";
+import ConflictBadge from "../ConflictBadge/ConflictBadge";
 
 interface AbsenceTableProps {
   absences: Absence[];
@@ -93,7 +95,7 @@ function AbsenceCard({ absence }: { absence: Absence }) {
   );
 }
 
-function AbsenceTableRow({ absence }: { absence: Absence }) {
+function AbsenceTableRow({ absence, conflict }: { absence: Absence; conflict: boolean | undefined }) {
   const endDate = getEndDate(absence.startDate, absence.days);
   const { firstName, lastName, id } = absence.employee;
   const initials = `${firstName[0]}${lastName[0]}`.toUpperCase();
@@ -130,6 +132,9 @@ function AbsenceTableRow({ absence }: { absence: Absence }) {
       <td className="py-3 px-4">
         <StatusBadge approved={absence.approved} />
       </td>
+      <td className="py-3 px-4">
+        <ConflictBadge conflict={conflict} />
+      </td>
     </tr>
   );
 }
@@ -148,6 +153,7 @@ export default function AbsenceTable({ absences }: AbsenceTableProps) {
     );
   }
 
+  const conflicts = useConflicts(absences.map((a) => a.id));
   const sorted = sortAbsences(absences, sort);
 
   if (absences.length === 0) {
@@ -203,11 +209,21 @@ export default function AbsenceTable({ absences }: AbsenceTableProps) {
               >
                 Status
               </th>
+              <th
+                scope="col"
+                className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+              >
+                Conflicts
+              </th>
             </tr>
           </thead>
           <tbody>
             {sorted.map((absence) => (
-              <AbsenceTableRow key={absence.id} absence={absence} />
+              <AbsenceTableRow
+                key={absence.id}
+                absence={absence}
+                conflict={conflicts.get(absence.id)}
+              />
             ))}
           </tbody>
         </table>
